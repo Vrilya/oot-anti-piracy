@@ -16,7 +16,7 @@ Zelda's hair check is slightly different: it reads the CIC identifier from the b
 
 Historically, the most common cause of these checks tripping was period backup loaders such as the Bung Doctor V64, which required a real cartridge to be inserted as a CIC source. If the inserted cartridge used a different CIC variant than the loaded ROM expected, the checks would fail. Early flashcarts without proper CIC handling and inaccurate emulators of the era could trip the checks for the same reason. Most modern accurate emulators reproduce the CIC behavior correctly and do not trigger these routines.
 
-The protection routines below all follow the same general pattern: load a CIC-derived value, compare it against a hardcoded constant, and branch into sabotage behavior on mismatch. Because the constants and sabotage paths differ between routines, each one needs its own patch.
+The protection routines below all follow the same general pattern: load CIC/IPL3-derived state, compare it against a hardcoded constant, and branch into sabotage behavior on mismatch. Because the constants and sabotage paths differ between routines, each one needs its own patch.
 
 The behavior of each routine was identified by observing in-game effects in conditions where the checks trip and tracing the responsible code paths back through the ROM.
 
@@ -110,4 +110,4 @@ The unique signature `3C 01 C8 6E 34 21 20 00` can be used to locate the patch s
 | Zelda's hair | CIC identifier `!= 6105` | hair geometry scaled by 2.0f into a pentagon | `beq` → unconditional `b` (2 bytes) |
 | Castle escape gates | RDRAM boot residue `!= 0xC86E2000` | routine returns early, gates never open | second register changed (1 byte) |
 
-All three routines share the same design: a runtime comparison against a CIC-derived constant, with sabotage behavior on mismatch placed far enough into the game that casual testing would not surface it. All three can be neutralized with a minimal patch, one to two bytes per routine.
+All three routines share the same design: a runtime comparison against CIC/IPL3-derived state, with sabotage behavior on mismatch placed far enough into the game that casual testing would not surface it. All three can be neutralized with a minimal patch, one to two bytes per routine.
